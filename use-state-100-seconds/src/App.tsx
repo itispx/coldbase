@@ -15,7 +15,7 @@ const App: React.FC = () => {
   return (
     <div>
       <button onClick={decrementHandler}>-</button>
-      <text>{count}</text>
+      <span>{count}</span>
       <button onClick={incrementHandler}>+</button>
     </div>
   );
