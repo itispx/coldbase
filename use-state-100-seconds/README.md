@@ -1,70 +1,67 @@
-# Getting Started with Create React App
+# REACT USE STATE IN 100 SECONDS
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React useState in 100 seconds
 
-## Available Scripts
+So today we are going to be learning about React’s useState hook. You will want to use this hook whenever you have a value that needs to trigger a component re-render.
 
-In the project directory, you can run:
+First, let’s implement a count component using let and see why it will not work. First let’s set up a component that displays the current value of count and a button to increase and decrease the value.
 
-### `npm start`
+```js
+const App: React.FC = () => {
+  let count = 3;
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  function incrementHandler(): void {
+    count = count + 1;
+  }
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  function decrementHandler(): void {
+    count = count - 1;
+  }
 
-### `npm test`
+  return (
+    <div>
+      <button onClick={decrementHandler}>-</button>
+      <span>{count}</span>
+      <button onClick={incrementHandler}>+</button>
+    </div>
+  );
+};
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+As we can see, when we’re using let, the component will not trigger a re-render when the value changes. If we console.log the values we can see that the value of count is changing, but it is not showing in the UI.
 
-### `npm run build`
+Let’s fix this by using the useState hook. You can only use hooks inside a functional component and it needs to be at the component’s root level.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+You can set the initial value like this `useState(3)` or pass in a function `useState(() => 3)`, this function will only run when the component renders for the first time.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+To access and modify the state you need to use array destructuring where count is the variable that you can use to access the current state value and setCount is the variable you can use to modify the state value.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```js
+const [count, setCount] = useState(3);
+```
 
-### `npm run eject`
+Now let’s fix our counter example. Similar to the initial state, you can also pass a function to setCount. When passing a function to setCount it gives you the previous state as a parameter. We are going to get the previous state and add 1 on increase and remove 1 on decrease.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```js
+function incrementHandler(): void {
+  setCount((prev) => prev + 1);
+}
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+function decrementHandler(): void {
+  setCount((prev) => prev - 1);
+}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Now as we can see, the counter component is working perfectly because the UI updates every time the state changes.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+If you are wondering why we can only use hooks at the component’s root level, it’s because when we use several useState hooks inside our component, React relies on the order in which hooks are called to figure out which piece of state corresponds to the right useState call. So if we render our hooks conditionally, React will not know what to return when there’s a missing hook.
 
-## Learn More
+```js
+const condition = false;
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+if (condition) {
+  const [state1, setState1] = useState(false);
+}
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Thank you for watching, and if you have any questions or feedback, please let me know in the comments.
