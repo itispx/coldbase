@@ -1,0 +1,29 @@
+.counter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  height: 75px;
+  width: 100px;
+  border-radius: 50px;
+  border-width: 0;
+  font-size: 30px;
+  background-color: #fbfcfa;
+  cursor: pointer;
+}
+
+span {
+  margin: 50px;
+  font-size: 45px;
+  color: #fcfbfc;
+}
+
+h1 {
+  color: darkgray;
+}
+
+h2 {
+  color: gray;
+}
