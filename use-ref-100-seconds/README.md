@@ -1,21 +1,20 @@
-# REACT USE STATE IN 100 SECONDS
+# REACT USE REF IN 100 SECONDS
 
-React useState in 100 seconds
-
-So today we are going to be learning about React’s useState hook. You will want to use this hook whenever you have a value that needs to trigger a component re-render.
-
-First, let’s implement a count component using let and see why it will not work. First let’s set up a component that displays the current value of count and a button to increase and decrease the value.
+Let’s take our counter example and say we want to display the amount of times the counter has been updated. We can do that with the `useState` hook
 
 ```js
 const App: React.FC = () => {
-  let count = 3;
+  const [count, setCount] = useState(3);
+  const [countUpdates, setCountUpdates] = useState(0);
 
   function incrementHandler(): void {
-    count = count + 1;
+    setCount((prev) => prev + 1);
+    setCountUpdates((prev) => prev + 1);
   }
 
   function decrementHandler(): void {
-    count = count - 1;
+    setCount((prev) => prev - 1);
+    setCountUpdates((prev) => prev + 1);
   }
 
   return (
@@ -23,45 +22,85 @@ const App: React.FC = () => {
       <button onClick={decrementHandler}>-</button>
       <span>{count}</span>
       <button onClick={incrementHandler}>+</button>
+
+      <h1>Count has been updated {countUpdates} times</h1>
     </div>
   );
 };
 ```
 
-As we can see, when we’re using let, the component will not trigger a re-render when the value changes. If we console.log the values we can see that the value of count is changing, but it is not showing in the UI.
-
-Let’s fix this by using the useState hook. You can only use hooks inside a functional component and it needs to be at the component’s root level.
-
-You can set the initial value like this `useState(3)` or pass in a function `useState(() => 3)`, this function will only run when the component renders for the first time.
-
-To access and modify the state you need to use array destructuring where count is the variable that you can use to access the current state value and setCount is the variable you can use to modify the state value.
+However, this means that everytime we update our counter, the component will re-render twice. To fix this we can use the `useRef` hook. The `useRef` hook will keep persistence between component renders, that way we can know how many times the counter has been updated without triggering a re-render. We use the refs `current` method to get access and modify the value.
 
 ```js
 const [count, setCount] = useState(3);
+
+const countRef = useRef(0);
+
+  	function incrementHandler(): void {
+ 	   setCount((prev) => prev + 1);
+   	   countRef.current++;
+ 	 }
+
+ 	 function decrementHandler(): void {
+ 	   setCount((prev) => prev - 1);
+ 	   countRef.current++;
+ 	 }
+
+  return (
+    <div>
+      <div className="counter-container">
+        <button onClick={decrementHandler}>-</button>
+        <span>{count}</span>
+  	      <button onClick={incrementHandler}>+</button>
+   	   </div>
+
+ 	     <h1>Count has been updated {countRef.current} times</h1>
+    </div>
+  );
+};
 ```
 
-Now let’s fix our counter example. Similar to the initial state, you can also pass a function to setCount. When passing a function to setCount it gives you the previous state as a parameter. We are going to get the previous state and add 1 on increase and remove 1 on decrease.
+You can also use `useRef` to get a reference to a DOM element and manipulate it directly. Here we create a ref called `elementRef` using `useRef`, we then pass this ref to the ref attribute of a `<h2>` element and now every time we increment or decrement the count we can display that in the UI.
 
 ```js
+const [count, setCount] = useState(3);
+
+const countRef = useRef(0);
+
+const elementRef = (useRef < HTMLHeadingElement) | (null > null);
+
 function incrementHandler(): void {
   setCount((prev) => prev + 1);
+  countRef.current++;
+
+  if (elementRef.current) {
+    elementRef.current.textContent = "Count was incremented";
+  }
 }
 
 function decrementHandler(): void {
   setCount((prev) => prev - 1);
+  countRef.current++;
+
+  if (elementRef.current) {
+    elementRef.current.textContent = "Count was decremented";
+  }
 }
+
+return (
+  <div>
+    <div className="counter-container">
+      <button onClick={decrementHandler}>-</button>
+      <span>{count}</span>
+      <button onClick={incrementHandler}>+</button>
+    </div>
+
+    <h1>Count has been updated {countRef.current} times</h1>
+    <h2 ref={elementRef}> </h2>
+  </div>
+);
 ```
 
-Now as we can see, the counter component is working perfectly because the UI updates every time the state changes.
+Before we update the `textContent` of the h2 element, we first need to check if `elementRef.current` is not null and it holds the reference to the h2 element. This is necessary because, when the component mounts initially, `elementRef.current` is null. If we tried to access `textContent` directly without checking that the reference is not null, we would get a runtime error.
 
-If you are wondering why we can only use hooks at the component’s root level, it’s because when we use several useState hooks inside our component, React relies on the order in which hooks are called to figure out which piece of state corresponds to the right useState call. So if we render our hooks conditionally, React will not know what to return when there’s a missing hook.
-
-```js
-const condition = false;
-
-if (condition) {
-  const [state1, setState1] = useState(false);
-}
-```
-
-Thank you for watching, and if you have any questions or feedback, please let me know in the comments.
+In summary, useRef is a hook that provides a way to keep track of mutable values that don't trigger a re-render. It's useful for manipulating the DOM, keeping track of values between renders, and other scenarios where you need a mutable reference that persists between renders.
